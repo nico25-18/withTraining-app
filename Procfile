@@ -1,1 +1,1 @@
-web: gunicorn WithTrainning.wsgi
+web: gunicorn WithTrainningPj.wsgi
