@@ -14,6 +14,7 @@
 - HTML（Djangoテンプレート）
 - CSS/JS（Vanilla）
 - MySQL（開発用DB）
+- PostgresSQL（Web公開時）
 
 ## 開発環境構築
 ```bash
