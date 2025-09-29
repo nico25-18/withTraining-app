@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  WithTraining｜新規登録
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .form-group {
+      margin-bottom: 1.5em;
+    }
+    .required-marker {
+      color: red;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3em;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.6em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .submit-button {
+      text-align: center;
+    }
+    button {
+      padding: 0.8em 2em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="form-container">
+    <h1>新規登録</h1>
+    <form method="POST" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}">
+            {{ field.label }}
+            {% if field.field.required %}
+              <span class="required-marker">※</span>
+            {% else %}
+              <span>（任意）</span>
+            {% endif %}
+          </label>
+
+          {{ field }}
+
+          {% if field.help_text %}
+            <small style="color: #777;">{{ field.help_text }}</small>
+          {% endif %}
+
+          {% for error in field.errors %}
+            <p style="color:red;">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div class="submit-button">
+        <button type="submit">登録する</button>
+      </div>
+    </form>
+  </div>
+  {% load static %}
+  <script src="{% static 'users/js/signup_validation.js' %}"></script>
+{% endblock %}

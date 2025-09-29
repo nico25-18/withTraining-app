@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/notification.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  通知一覧
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .is_read {
+      margin-bottom: 15px;
+      background: #f7f7f7;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: normal;
+    }
+    .unread {
+      margin-bottom: 15px;
+      background: #e3f2fd;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .btn-link {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 10px;
+      width: 155px;
+      height: 30px;
+      background-color: #1976d2;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  <div class="container" style="max-width: 600px; margin: auto; padding: 20px;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2>通知一覧</h2>
+    <form>
+      {% csrf_token %}
+      <label><input type="checkbox" id="check-all" />全選択 / 解除</label>
+      <div style="margin-bottom: 1rem;">
+        <button type="button" id="mark_read" class="btn btn-secondary">選択済みを既読</button>
+        <button type="button" id="delete" class="btn btn-danger" onclick="return confirm('本当に削除しますか？');">選択済みを削除</button>
+      </div>
+      <div id="notification-area">
+        {% if notifications %}
+          <ul style="list-style: none; padding: 0;">
+            {% for item in notifications %}
+              <li id="notification-{{ item.notification.id }}"
+                class="notification-item {% if item.notification.is_read %}                                  
+                  is_read
+                {% else %}                                    
+                  unread
+                {% endif %}"
+                data-id="{{ item.notification.id }}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <label for="chk-{{ item.notification.id }}" style="flex: 1; cursor: pointer;">
+                    <input type="checkbox" id="chk-{{ item.notification.id }}" class="check-notification" name="selected_notifications" value="{{ item.notification.id }}" style="margin-right: 10px;" />
+                    <strong>{{ item.notification.get_notification_type_display }}</strong><br />
+                    {{ item.notification.message }}<br />
+                    <small>{{ item.notification.created_at|date:'Y年m月d日 H:i' }}</small>
+                  </label>
+
+                  <div style="margin-left: 10px; white-space: nowrap;">
+                    {% if item.notification.notification_type == 'like' %}
+                      <a href="{% url 'user_profile' item.notification.from_user_id %}" class="btn-link">プロフィールを見る</a>
+                    {% elif item.notification.notification_type == 'message' or item.notification.notification_type == 'match' %}
+                      <a href="{% url 'chatroom_detail' item.room_id %}" class="btn-link">トークを開く</a>
+                    {% endif %}
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p id="no-notification">通知はまだありません。</p>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+{% endblock %}

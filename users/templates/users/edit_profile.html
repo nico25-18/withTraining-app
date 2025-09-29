@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  プロフィール編集
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .form-row {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+    .form-row label {
+      width: 175px;
+      font-weight: bold;
+      padding-top: 0.3rem;
+      flex-shrink: 0;
+    }
+    .form-row .form-field {
+      flex: 1;
+    }
+    .form-row .form-field input,
+    .form-row .form-field select,
+    .form-row .form-field textarea {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }   
+    .form-row .form-field input[type='checkbox'] {
+      width: auto;
+      margin-right: 0.5rem;
+      vertical-align: middle;
+    }
+    .form-error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 600px; margin: 0 auto; padding: 2rem;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2 style="text-align: center;">プロフィール編集</h2>
+    <form method="post" enctype="multipart/form-data" style="margin-top: 2rem;">
+      {% csrf_token %}
+
+      {% for field in form %}
+        {% if field.name != 'profile_image' %}
+          <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            <div class="form-field">
+              {{ field }}
+              {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+              {% endif %}
+              {% for error in field.errors %}
+                <div class="form-error">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <div class="form-row">
+        <label for="{{ form.profile_image.id_for_label }}">{{ form.profile_image.label }}</label>
+        <div class="form-field">
+          {% if form.instance.profile_image %}
+            <div style="margin-bottom: 1rem;">
+              <p>
+                <strong>現在のプロフィール</strong>
+              </p>
+              <img src="{{ form.instance.profile_image.url }}" alt="現在のプロフィール画像" width="120" height="120" style="border-radius: 50%; object-fit: cover;" />
+            </div>
+          {% endif %}
+
+          {% if form.initial.profile_image %}
+            <div style="margin-top: 0.5rem;">
+              <input type="checkbox" name="delete_profile_image" id="delete_profile_image" />
+              <label for="delete_profile_image">現在のプロフィール画像を削除</label>
+            </div>
+          {% endif %}
+          <input type="file" name="profile_image" id="{{ form.profile_image.id_for_label }}" />
+          <small class="form-text text-muted">新しい画像を選択すると上書きされます</small>
+
+          {% for error in form.profile_image.errors %}
+            <div class="form-error">{{ error }}</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <button type="submit" style="width: 100%; padding: 0.75rem; background-color: #007BFF; color: white; border: none; border-radius: 5px;">保存する</button>
+    </form>
+  </div>
+{% endblock %}

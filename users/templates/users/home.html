@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  WithTraining｜合トレマッチングサイト
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    ul {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 0;
+      margin: 1em 0;
+    }
+    li {
+      padding: 1em;
+      background-color: #fff;
+      list-style-type: disc;
+      list-style-position: inside;
+      padding-left: 1em;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>WithTraining（ウィズ・トレーニング）へようこそ！</h2>
+    <p>
+      このサイトは、筋トレやフィットネスを頑張るみなさんが、<br />
+      一緒にトレーニングできる「合トレ仲間」を見つけるためのマッチングサービスです。
+    </p>
+
+    <h2>✅ 特長</h2>
+    <ul>
+      <li>地域やトレーニング種目から気の合う相手を検索</li>
+      <li>気軽にメッセージでやりとりして合トレの予定を調整</li>
+      <li>
+        <strong>完全無料</strong>で利用できます（登録・投稿・マッチングもすべて）
+      </li>
+    </ul>
+
+    <h2>⚠️ ご利用にあたっての注意事項</h2>
+    <ul>
+      <li>トラブル防止のため、相手とのやりとりは丁寧に行ってください</li>
+      <li>実際に会う際は、公共のジムなど安全な場所を選びましょう</li>
+      <li>本サービスはユーザー間のトラブルには責任を負いかねます</li>
+    </ul>
+
+    <div class="buttons">
+      <a href="{% url 'signup' %}">新規登録はこちら</a>
+      <a href="{% url 'login' %}">ログイン</a>
+    </div>
+  </div>
+{% endblock %}

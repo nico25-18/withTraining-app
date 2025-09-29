@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}ログイン{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .required {
+    color: red;
+    margin-left: 5px;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+  .error {
+    color: red;
+    margin-bottom: 15px;
+  }
+</style>
+{% endblock%}
+
+{% block content %}
+<div class="form-container">
+  <h2>ログイン</h2>
+
+  <form method="post" action="" novalidate>
+    {% csrf_token %}
+
+    {% if form.errors %}
+      <p class="error">ユーザー名またはパスワードが間違っています。</p>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="username">ユーザー名<span class="required">*</span></label>
+      <input type="text" name="username" id="username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">パスワード<span class="required">*</span></label>
+      <input type="password" name="password" id="password" required>
+    </div>
+
+    <div class="form-group">
+      <button type="submit">ログイン</button>
+    </div>
+
+    <div class="login-links">
+      <a href="{% url 'password_reset' %}">パスワードを忘れた方はこちら</a> |
+      <a href="{% url 'home' %}">戻る</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

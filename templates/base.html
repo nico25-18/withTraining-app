@@ -1,0 +1,76 @@
+<html>
+  <head>
+     <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>
+      {% block title %}WithTraining｜合トレマッチングサイト{% endblock %}
+    </title>
+    <style>
+      body {
+        font-family: sans-serif;
+        line-height: 1.8;
+        margin: 2em;
+        background-color: #f9f9f9;
+      }
+      .header-banner {
+        background-color: #007bff;
+        color: white;
+        padding: 1em 1.5em;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+        margin-bottom: 2em;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      .header-banner h1 {
+        margin: 0;
+        font-size: 1.6em;
+      }
+      .container {
+        max-width: 800px;
+        background: white;
+        padding: 2em;
+        margin: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .buttons a {
+        display: inline-block;
+        margin: 1em 1em 0 0;
+        padding: 0.6em 1.2em;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      .buttons a:hover {
+        background: #0056b3;
+      }
+      .form-container {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 2em;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .login-links {
+        text-align: center;
+        margin-top: 15px;
+      }
+      .login-links a {
+        text-decoration: none;
+        color: #007BFF;
+      }
+    </style>
+    <!-- 継承先で個別のjsを読み込む用 -->
+    {% block extra_js %}{% endblock %}
+    <!-- 継承先でスタイルを追加したいとき用 -->
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <div class="header-banner">
+      <h1>WithTraining（ウィズ・トレーニング）</h1>
+    </div>
+    <!-- ページごとの本文 -->
+    {% block content %}{% endblock %}
+  </body>
+</html>

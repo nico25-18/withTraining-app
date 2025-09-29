@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/like_toggle.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  ユーザー検索
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .search-btn {
+      width: 120px;
+      padding: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .btn-secondary {
+      width: 160px;
+      display: inline-block;
+      padding: 8px 12px;
+      background-color: #ccc;
+      color: #000;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .btn-like {
+      width: 160px;
+      display: inline-block;
+      padding: 6px 10px;
+      background-color: #ffe0e0;
+      color: #d00;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .btn-like:hover {
+      background-color: #ffd2d2;
+    }
+    /* スマホ表示時は縦並びにする */
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2>ユーザー検索</h2>
+
+    <form method="get" class="search-form" style="margin-bottom: 2rem;">
+      <div class="form-row">
+        <div class="form-group">{{ form.gender.label_tag }}
+          {{ form.gender }}</div>
+        <div class="form-group">{{ form.training_area.label_tag }}
+          {{ form.training_area }}</div>
+        <div class="form-group">{{ form.training_area_detail.label_tag }}
+          {{ form.training_area_detail }}</div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">{{ form.training_goal.label_tag }}
+          {{ form.training_goal }}</div>
+        <div class="form-group">{{ form.training_experience.label_tag }}
+          {{ form.training_experience }}</div>
+      </div>
+
+      <div class="form-row">
+        <button type="submit" class="search-btn">検索</button>
+      </div>
+    </form>
+
+    {% if profiles %}
+      <h3>検索結果（{{ profiles|length }}件）</h3>
+      <ul style="list-style: none; padding: 0;">
+        {% for profile in profiles %}
+          <li style="margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 8px; padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="プロフィール画像" width="80" height="80" style="border-radius: 50%; object-fit: cover;" />
+              {% else %}
+                <div style="width: 80px; height: 80px; background: #eee; border-radius: 50%;"></div>
+              {% endif %}
+
+              <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span><strong>ユーザー名：</strong> {{ profile.user.username }}</span>
+                  <a href="{% url 'user_profile' profile.user.id %}?from=search" class="btn-secondary">プロフィールを見る</a>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <span><strong>地域：</strong> {{ profile.get_training_area_display }}</span>
+                  <a href="#"
+                    class="btn-like"
+                    data-user-id="{{ profile.user.id }}"
+                    title="{% if profile.user in liked_user_ids %}
+                      いいねを取り消す
+                    {% else %}
+                      いいねする
+                    {% endif %}">
+                    {% if profile.user.id in liked_user_ids %}
+                      💔 いいねを取り消す
+                    {% else %}
+                      ❤️ いいねする
+                    {% endif %}
+                  </a>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <span><strong>目的：</strong> {{ profile.get_training_goal_display }}</span>
+                </div>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% elif searched %}
+      <p>条件に一致するユーザーが見つかりませんでした。</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/like_toggle.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  おすすめユーザー
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .profile-card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      width: 230px;
+      border-radius: 10px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+    .profile-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .btn {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 10px;
+      width: 155px;
+      height: 30px;
+      background-color: #1976d2;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn-like {
+      background-color: #ffe0e0;
+      color: #d00;
+    }
+    .btn-research {
+      width: 300px;
+      background-color: #1e9e15ff;
+      color: color: white;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 827px; margin: auto; padding: 20px;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2>おすすめユーザ一覧</h2>
+    <a href="{% url 'recommended_users' %}" class="btn btn-research">おすすめユーザーを再検索する</a>
+    <div class="card-container">
+      {% for profile in recommendations %}
+        <div class="profile-card">
+          <div style="height: 75%;">
+            {% if profile.profile_image %}
+              <img src="{{ profile.profile_image.url }}" alt="プロフィール画像" class="profile-img" />
+            {% else %}
+              <div style="width: 120px; height: 120px; background: #eee; border-radius: 50%; display: inline-block;"></div>
+            {% endif %}
+            <h4>{{ profile.user.username }}</h4>
+            <p>地域：{{ profile.get_training_area_display }}</p>
+            <p>目標：{{ profile.get_training_goal_display }}</p>
+            <p>経験：{{ profile.get_training_experience_display }}</p>
+          </div>
+          <a href="{% url 'user_profile' profile.user.id %}?from=recommend" class="btn btn-primary">プロフィールを見る</a>
+          <a href="#" class="btn btn-like" data-user-id="{{ profile.user.id }}" title="いいねする">❤️ いいねする</a>
+        </div>
+      {% empty %}
+        <p>おすすめのユーザーが見つかりませんでした。</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

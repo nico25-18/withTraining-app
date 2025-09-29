@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}
+  マッチ一覧
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 827px; margin: auto; padding: 20px;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2>マッチ一覧</h2>
+
+    {% if match_users %}
+      <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+        {% for user in match_users %}
+          <div style="width: 180px; border: 1px solid #ccc; border-radius: 10px; padding: 10px; background: #f9f9f9;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              {% if user.profile.profile_image %}
+                <img src="{{ user.profile.profile_image.url }}" alt="プロフィール画像" width="120" height="120" style="border-radius: 50%; object-fit: cover;" />
+              {% else %}
+                <div style="width: 120px; height: 120px; background: #eee; border-radius: 50%; display: inline-block;"></div>
+              {% endif %}
+            </div>
+            <p>
+              <strong>{{ user.profile.nickname|default:user.username }}</strong>
+            </p>
+            <p>{{ user.profile.get_training_goal_display|default:'-' }}</p>
+            <a href="{% url 'user_profile' user.id %}?from=match" class="btn">プロフィールを見る</a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>まだマッチしているユーザーはいません。</p>
+    {% endif %}
+  </div>
+{% endblock %}

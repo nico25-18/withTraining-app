@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/like_toggle.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  ユーザープロフィール
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .profile-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .profile-label {
+      display: inline-block;
+      width: 190px;
+      font-weight: bold;
+    }
+    .profile-value {
+      flex: 1;
+    }
+    .btn {
+      width: 160px;
+      display: inline-block;
+      padding: 6px 10px;
+      background-color: greenyellow;
+      color: green;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .btn-like {
+      width: 160px;
+      display: inline-block;
+      padding: 6px 10px;
+      background-color: #ffe0e0;
+      color: #d00;
+      text-decoration: none;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .btn-like:hover {
+      background-color: #ffd2d2;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 700px; margin: 0 auto; padding: 2rem;">
+    {% if request.GET.from == 'search' %}
+      <a href="{% url 'user_search' %}">← 検索結果一覧に戻る</a>
+    {% elif request.GET.from == 'match' %}
+      <a href="{% url 'match_list' %}">← マッチ一覧に戻る</a>
+    {% elif request.GET.from == 'recommend' %}
+      <a href="{% url 'recommended_users' %}">← おすすめ一覧に戻る</a>
+    {% else %}
+      <a href="{% url 'mypage' %}">← マイページに戻る</a> {# フォールバック #}
+    {% endif %}
+    <h2>{{ target_user.username }} さんのプロフィール</h2>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      {% if profile.profile_image %}
+        <img src="{{ profile.profile_image.url }}" alt="プロフィール画像" width="120" height="120" style="border-radius: 50%; object-fit: cover;" />
+      {% else %}
+        <div style="width: 120px; height: 120px; background: #eee; border-radius: 50%; display: inline-block;"></div>
+      {% endif %}
+    </div>
+
+    <div style="border: 1px solid #ccc; border-radius: 8px; padding: 20px; background: #fafafa;">
+      <div class="profile-item">
+        <span class="profile-label">性別：</span>
+        <span class="profile-value">{{ profile.get_gender_display|default:'未登録' }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="profile-label">合トレ希望地域：</span>
+        <span class="profile-value">{{ profile.get_training_area_display|default:'未登録' }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="profile-label">合トレ希望地域（詳細）：</span>
+        <span class="profile-value">{{ profile.training_area_detail|default:'未登録' }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="profile-label">トレーニング目標：</span>
+        <span class="profile-value">{{ profile.get_training_goal_display|default:'未登録' }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="profile-label">トレーニング経験：</span>
+        <span class="profile-value">{{ profile.get_training_experience_display|default:'未登録' }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="profile-label">自己紹介：</span>
+        <span class="profile-value">{{ profile.introduction|linebreaksbr }}</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <a href="#"
+        class="btn-like"
+        data-user-id="{{ profile.user.id }}"
+        title="{% if liked %}
+          
+          いいねを取り消す
+
+        {% else %}
+               
+          いいねする
+
+        {% endif %}">
+        {% if liked %}
+          💔 いいねを取り消す
+        {% else %}
+          ❤️ いいねする
+        {% endif %}
+      </a>
+      {% if room_id %}
+        <a href="{% url 'chatroom_detail' room_id %}" class="btn">チャットルームへ</a>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

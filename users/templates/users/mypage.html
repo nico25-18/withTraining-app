@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/mypage_notification.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  マイページ
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+    .mypage-header {
+      background-color: #e0f7fa;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .content-wrapper {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+    }
+    .profile-img {
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .profile-section {
+      background-color: #fafafa;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      flex: 2;
+    }
+    .action-section {
+      border: 1px solid #ccc;
+      padding: 5px;
+      border-radius: 10px;
+      flex: 1;
+      height: fit-content;
+    }
+    .notification-area {
+      background-color: #fffafdff;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+    }
+    .action-area {
+      background-color: #f0f4c3;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+    }
+    .setting-area {
+      background-color: #b4ffb1ff;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    .profile-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .profile-label {
+      display: inline-block;
+      width: 190px;
+      font-weight: bold;
+    }
+    .profile-value {
+      flex: 1;
+    }
+    .mypage-actions {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 10px;
+      width: 155px;
+      height: 30px;
+      background-color: #1976d2;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn-secondary {
+      background-color: #888;
+      border: none;
+      width: 175px;
+      height: 50px;
+    }
+    .btn-notification {
+      background-color: #fcdff3ff;
+      color: #504e4eff;
+    }
+    .badge {
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      padding: 3px 8px;
+      font-size: 0.8rem;
+      vertical-align: top;
+      margin-left: 4px;
+    }
+    @media (max-width: 768px) {
+      .content-wrapper {
+        flex-direction: column;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="mypage-header">
+      <h2>{{ user.username }} さんのマイページ</h2>
+    </div>
+    <div class="content-wrapper">
+      <div class="profile-section">
+        {% if user.profile.profile_image %}
+          <p class="profile-img">
+            <strong>プロフィール画像</strong><br />
+            <img src="{{ user.profile.profile_image.url }}" alt="プロフィール画像" width="120" height="120" style="border-radius: 50%; object-fit: cover;" />
+          </p>
+        {% endif %}
+        <div class="profile-item">
+          <span class="profile-label">ユーザー名：</span>
+          <span class="profile-value">{{ user.username }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">メールアドレス：</span>
+          <span class="profile-value">{{ user.email|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">性別：</span>
+          <span class="profile-value">{{ user.profile.get_gender_display|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">合トレ希望地域：</span>
+          <span class="profile-value">{{ user.profile.get_training_area_display|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">合トレ希望地域（詳細）：</span>
+          <span class="profile-value">{{ user.profile.training_area_detail|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">トレーニング目標：</span>
+          <span class="profile-value">{{ user.profile.get_training_goal_display|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">トレーニング経験：</span>
+          <span class="profile-value">{{ user.profile.get_training_experience_display|default:'未登録' }}</span>
+        </div>
+
+        <div class="profile-item">
+          <span class="profile-label">自己紹介：</span>
+          <span class="profile-value">{{ user.profile.introduction|linebreaksbr }}</span>
+        </div>
+
+        <hr />
+        <div class="mypage-actions">
+          <a href="{% url 'edit_profile' %}" class="btn">プロフィール編集</a>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <div class="notification-area">
+          <a href="{% url 'notification_list' %}" class="btn btn-notification">
+            通知
+            <span id="unread-badge" class="badge" style="display: none;"></span>
+          </a>
+        </div>
+        <div class="action-area">
+          <a href="{% url 'user_search' %}" class="btn">ユーザーを探す</a>
+          <a href="{% url 'recommended_users' %}" class="btn">おすすめユーザー</a>
+          <a href="{% url 'match_list' %}" class="btn">マッチング一覧</a>
+          <a href="{% url 'chatroom_list' %}" class="btn">チャットを確認</a>
+        </div>
+        <div class="setting-area">
+          <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">ログアウト</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

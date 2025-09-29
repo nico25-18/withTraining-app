@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/unread_badges.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  チャット一覧
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .chat-list-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #eee;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .chat-list-item:hover {
+      background-color: #f0f0f0;
+    }
+    .chat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+    .chat-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-name {
+      font-weight: bold;
+    }
+    
+    /* チャットバルーン */
+    .message-container {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .message-left {
+      justify-content: flex-start;
+    }
+    .message-right {
+      justify-content: flex-end;
+    }
+    .message-bubble {
+      max-width: 60%;
+      padding: 10px;
+      border-radius: 12px;
+      position: relative;
+      word-wrap: break-word;
+      background-color: #f1f0f0;
+    }
+    .message-right .message-bubble {
+      background-color: #dcf8c6;
+    }
+    .message-meta {
+      font-size: 0.75rem;
+      margin-top: 5px;
+      text-align: right;
+      color: #777;
+    }
+    .unread-badge {
+      background-color: red;
+      color: white;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      margin-left: auto;
+      display: inline-block;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 800px; margin: auto; padding: 20px;">
+    <a href="{% url 'mypage' %}">← マイページに戻る</a>
+    <h2>チャットルーム一覧</h2>
+
+    {% if chatrooms %}
+      <ul style="list-style: none; padding: 0;">
+        {% for item in chatrooms %}
+          <li style="margin-bottom: 10px;">
+            <a href="{% url 'chatroom_detail' item.room.id %}" class="chat-list-item" style="text-decoration: none; color: inherit;">
+              {% if item.partner.profile.profile_image %}
+                <img src="{{ item.partner.profile.profile_image.url }}" class="chat-avatar" alt="プロフィール画像" />
+              {% else %}
+                <div class="chat-avatar" style="background-color: #ccc;"></div>
+              {% endif %}
+              <div class="chat-content">
+                <span class="chat-name">{{ item.partner.profile.nickname|default:item.partner.username }}</span>
+                <small id="latest-msg-{{ item.room.id }}" style="color: #888;">
+                  {% if item.latest_message %}
+                    {{ item.latest_message.text|truncatechars:30 }}
+                  {% else %}
+                    メッセージはまだありません
+                  {% endif %}
+                </small>
+              </div>
+              <span id="unread-badge-{{ item.room.id }}" class="unread-badge" style="{% if item.unread_count == 0 %} display: none;{% endif %}">{{ item.unread_count }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>チャットルームはまだありません。</p>
+    {% endif %}
+  </div>
+{% endblock %}

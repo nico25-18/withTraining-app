@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_js %}
+  <script src="{% static 'users/js/msg_send.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+  {{ partner.username }}さんとのチャット
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    .chat-list-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #eee;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .chat-list-item:hover {
+      background-color: #f0f0f0;
+    }
+    .chat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+    .chat-content {
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-name {
+      font-weight: bold;
+    }
+    
+    /* チャットバルーン */
+    .message-container {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .message-left {
+      justify-content: flex-start;
+    }
+    .message-right {
+      justify-content: flex-end;
+    }
+    .message-bubble {
+      max-width: 60%;
+      padding: 10px;
+      border-radius: 12px;
+      position: relative;
+      word-wrap: break-word;
+      background-color: #f1f0f0;
+    }
+    .message-right .message-bubble {
+      background-color: #dcf8c6;
+    }
+    .message-meta {
+      font-size: 0.75rem;
+      margin-top: 5px;
+      text-align: right;
+      color: #777;
+    }
+    .message-form-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 10px;
+    }    
+    .message-input {
+      flex: 1;
+      padding: 0.5rem;
+      width: 90%;
+      resize: none;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }    
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 50%;
+      background-color: #1976d2;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .send-btn:hover {
+      background-color: #125ea3;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="container" style="max-width: 700px; margin: auto; padding: 20px;">
+    <a href="{% url 'chatroom_list' %}">← チャットルームに戻る</a>
+    <h2>💬 {{ partner.profile.nickname|default:partner.username }} さんとのチャット</h2>
+
+    <div class="chat-messages" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 10px; background: #f9f9f9;">
+      {% for msg in messages %}
+        <div id="msg-{{ msg.id }}"
+          class="message-container {% if msg.sender == request.user %}
+            
+            message-right
+
+          {% else %}
+            
+            message-left
+
+          {% endif %}">
+          {% if msg.sender == request.user %}
+            <small style="margin-top: auto; margin-right: 5px;">
+              {% if msg.is_read %}
+                ✔️ 既読
+              {% endif %}
+            </small>
+          {% endif %}
+          <div class="message-bubble">
+            {% if msg.sender != request.user %}
+              <strong style="font-size: 0.8rem;">{{ msg.sender.profile.nickname|default:msg.sender.username }}</strong><br />
+            {% endif %}
+            {{ msg.text|linebreaksbr }}
+          </div>
+        </div>
+      {% empty %}
+        <p>まだメッセージはありません。</p>
+      {% endfor %}
+    </div>
+
+    <form id="chat-form" method="post" data-room-id="{{ room.id }}">
+      {% csrf_token %}
+      <div class="message-form-wrapper">
+        <textarea id="chat-text" name="text" rows="3" placeholder="メッセージを入力..." class="message-input"></textarea>
+        <button type="submit" class="send-btn">▶</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
