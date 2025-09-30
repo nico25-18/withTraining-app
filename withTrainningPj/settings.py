@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'withTrainningPj.wsgi.application'
 USE_RENDER_DB = config('USE_RENDER_DB', default=False, cast=bool)
 
 if USE_RENDER_DB:
-    # ✅ Render環境（PostgreSQL）用
+    # Render環境（PostgreSQL）用
     DATABASES = {
         'default': dj_database_url.config(
             default=config('DATABASE_URL'),
@@ -86,7 +86,7 @@ if USE_RENDER_DB:
     )
 }
 else:
-    # ✅ 開発環境（MySQL）用
+    # 開発環境（MySQL）用
     DATABASES = {
         'default': {
             'ENGINE': config('DB_ENGINE', default='django.db.backends.mysql'),
@@ -135,7 +135,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
