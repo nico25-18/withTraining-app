@@ -1,5 +1,6 @@
 from datetime import timedelta
 import json
+from cloudinary.uploader import destroy
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, get_user_model, logout
@@ -75,26 +76,39 @@ def unread_notification_count(request):
 @login_required
 def edit_profile(request):
     profile = request.user.profile
-    old_image_path = profile.profile_image.path if profile.profile_image else None
+    old_image = profile.profile_image
     
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save()
             
-            if request.POST.get('delete_profile_image') and old_image_path:
-                # DB上のイメージパス削除
-                if profile.profile_image.path == old_image_path:
-                    profile.profile_image.delete(save=True)
+            if request.POST.get('delete_profile_image') and old_image:
+                if settings.DEBUG:
+                    old_image_path = old_image.path
+                    # DB上のイメージパス削除
+                    if profile.profile_image.path == old_image_path:
+                        profile.profile_image.delete(save=True)
                 
-                # 念のため物理ファイルも削除（存在していれば）
-                if os.path.exists(old_image_path):
-                    os.remove(old_image_path)
-                    
-            if profile.profile_image:
-                if profile.profile_image.path != old_image_path and old_image_path:
+                    # 物理ファイルも削除（存在していれば）
                     if os.path.exists(old_image_path):
                         os.remove(old_image_path)
+                else:
+                    if profile.profile_image.name == old_image.name:
+                        profile.profile_image.delete(save=True)
+                        
+                    public_id = old_image.name.rsplit('.', 1)[0]
+                    destroy(public_id)
+                    
+            if profile.profile_image:
+                if settings.DEBUG:
+                    if old_image and profile.profile_image.path != old_image.path:
+                        if os.path.exists(old_image.path):
+                            os.remove(old_image.path)
+                else:
+                    if old_image and profile.profile_image.name != old_image.name:
+                        public_id = old_image.name.rsplit('.', 1)[0]
+                        destroy(public_id)
                     
             return redirect('mypage')
     else:
