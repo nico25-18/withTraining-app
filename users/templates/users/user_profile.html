@@ -57,6 +57,8 @@
       <a href="{% url 'match_list' %}">← マッチ一覧に戻る</a>
     {% elif request.GET.from == 'recommend' %}
       <a href="{% url 'recommended_users' %}">← おすすめ一覧に戻る</a>
+    {% elif request.GET.from == 'notification' %}
+      <a href="{% url 'notification_list' %}">← 通知一覧に戻る</a>
     {% else %}
       <a href="{% url 'mypage' %}">← マイページに戻る</a> {# フォールバック #}
     {% endif %}

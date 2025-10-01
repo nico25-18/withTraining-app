@@ -71,7 +71,7 @@
 
                   <div style="margin-left: 10px; white-space: nowrap;">
                     {% if item.notification.notification_type == 'like' %}
-                      <a href="{% url 'user_profile' item.notification.from_user_id %}" class="btn-link">プロフィールを見る</a>
+                      <a href="{% url 'user_profile' item.notification.from_user_id %}?from=notification" class="btn-link">プロフィールを見る</a>
                     {% elif item.notification.notification_type == 'message' or item.notification.notification_type == 'match' %}
                       <a href="{% url 'chatroom_detail' item.room_id %}" class="btn-link">トークを開く</a>
                     {% endif %}
