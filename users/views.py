@@ -73,6 +73,8 @@ def unread_notification_count(request):
     count = Notification.objects.filter(to_user=request.user, is_read=False).count()
     return JsonResponse({'unread_notification_count': count})
 # プロフィール編集
+from decouple import config
+from django.conf import settings
 @login_required
 def edit_profile(request):
     profile = request.user.profile
@@ -95,10 +97,10 @@ def edit_profile(request):
                         os.remove(old_image_path)
                 else:
                     if profile.profile_image.name == old_image.name:
+                        old_image_name = old_image.name
                         profile.profile_image.delete(save=True)
-                        
-                    public_id = old_image.name.rsplit('.', 1)[0]
-                    destroy(public_id)
+                        public_id = old_image_name.rsplit('.', 1)[0]
+                        destroy(public_id)
                     
             if profile.profile_image:
                 if settings.DEBUG:
