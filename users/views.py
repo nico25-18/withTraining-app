@@ -185,6 +185,7 @@ def recommended_users(request):
     ).values_list('user1_id', 'user2_id')
 
     exclude_ids_flat = set()
+    exclude_ids_flat.add(request.user.id) # 自分自身
     for i in like_ids:
         exclude_ids_flat.add(i)
     for s, r in matched_ids:
